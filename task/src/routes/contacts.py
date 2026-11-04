@@ -39,7 +39,7 @@ async def reads_contacts(id:int,db:Session=Depends(get_db),
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
     return contact
 
-@router.post("/", response_model=ContactResponse)
+@router.post("/",status_code=201, response_model=ContactResponse)
 async def create_contact(body:ContactModel,db:Session=Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     return await repository_contacts.create_contact(body, current_user,db)

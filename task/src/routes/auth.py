@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredent
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.schemas import UserModel, UserResponse, TokenModel
+from src.schemas import UserModel, UserResponse, TokenModel, UserLogin
 from src.repository import users as repository_users
 from src.services.auth import auth_service
 
@@ -24,8 +24,8 @@ async def signup(body: UserModel, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenModel)
-async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = await repository_users.get_user_by_email(body.username, db)
+async def login(body: UserLogin, db: Session = Depends(get_db)):
+    user = await repository_users.get_user_by_email(body.email, db)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
     if not auth_service.verify_password(body.password, user.password):
